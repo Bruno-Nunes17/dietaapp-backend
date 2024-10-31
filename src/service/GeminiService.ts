@@ -1,5 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GeminiProps } from "../controllers/GeminiController";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { config } from "dotenv";
 config();
 

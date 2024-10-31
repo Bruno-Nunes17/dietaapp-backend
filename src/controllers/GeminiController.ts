@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { GeminiService } from "../services/GeminiService";
+import { GeminiService } from "../service/GeminiService";
 
 export interface GeminiProps {
   name: string;
