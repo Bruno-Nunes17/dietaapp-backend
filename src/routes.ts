@@ -14,12 +14,9 @@ export async function routes(
     return { ok: true };
   });
   fastify.post(
-    "/dieta",
+    "/create",
     async (request: FastifyRequest, reply: FastifyReply) => {
       return new GeminiController().handle(request, reply);
     }
   );
-  fastify.get("/teste", async (request: FastifyRequest, reply: FastifyReply) => {
-    return { message: "testando" };
-  });
 }
