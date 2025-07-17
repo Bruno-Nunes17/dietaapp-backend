@@ -9,13 +9,13 @@ app.setErrorHandler((error, request, reply) => {
 });
 
 const start = async () => {
-  await app.register(fastifyCors);
+  await app.register(fastifyCors, { origin: ["*"] });
   await app.register(routes);
 
   const port = 3333;
 
   try {
-    await app.listen({ port: 3333, host: "0.0.0.0"})
+    await app.listen({ port: 3333, host: "0.0.0.0" })
     console.log(`Servidor rodando no http://localhost:3333`)
   } catch (error) {
     console.log(error);
