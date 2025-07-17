@@ -6,32 +6,22 @@ config();
 const genAI = new GoogleGenerativeAI(process.env.API_KEY || "");
 
 class GeminiService {
-  async nutrition({
-    name,
-    gender,
-    weight,
-    height,
-    age,
-    goal,
-    level,
-    foods,
-    meals,
-  }: GeminiProps) {
+  async nutrition(props: GeminiProps) {
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
       const prompt = `
 Crie uma dieta completa e personalizada no formato JSON, com base nas informações a seguir:
 
-- Nome: ${name}
-- Sexo: ${gender}
-- Peso: ${weight}kg
-- Altura: ${height}
-- Idade: ${age} anos
-- Objetivo: ${goal}
-- Nível de atividade física: ${level}
-- Preferência alimentar: ${foods}
-- Número de refeições diárias: ${meals}
+- Nome: ${props.name}
+- Sexo: ${props.gender}
+- Peso: ${props.weight}kg
+- Altura: ${props.height}
+- Idade: ${props.age} anos
+- Objetivo: ${props.goal}
+- Nível de atividade física: ${props.level}
+- Preferência alimentar: ${props.foods}
+- Número de refeições diárias: ${props.meals}
 
 ⚠️ Regras importantes:
 - Considere apenas as informações fornecidas acima.
@@ -42,12 +32,12 @@ Crie uma dieta completa e personalizada no formato JSON, com base nas informaç�
 
 📦 Formato esperado:
 {
-  "nome": "${name}",
-  "sexo": "${gender}",
-  "idade": ${age},
-  "altura": ${height},
-  "peso": ${weight},
-  "objetivo": "${goal}",
+  "nome": "${props.name}",
+  "sexo": "${props.gender}",
+  "idade": ${props.age},
+  "altura": ${props.height},
+  "peso": ${props.weight},
+  "objetivo": "${props.goal}",
   "refeicoes": [
     {
         title: "🍳 Café da Manhã",
@@ -68,12 +58,12 @@ Crie uma dieta completa e personalizada no formato JSON, com base nas informaç�
 }
 `;
 
-
+      console.log("nutrition: enviando requisição para Google Generative AI");
       const result = await model.generateContent(prompt);
+      console.log("nutrition: resposta recebida");
 
       if (result.response && result.response.candidates) {
-        const jsonText = result.response.candidates[0]?.content.parts[0]
-          .text as string;
+        const jsonText = result.response.candidates[0]?.content.parts[0].text as string;
 
         let jsonString = jsonText
           .replace(/```\w*\n/g, "")
@@ -83,25 +73,16 @@ Crie uma dieta completa e personalizada no formato JSON, com base nas informaç�
         let jsonObject = JSON.parse(jsonString);
 
         return { data: jsonObject };
+      } else {
+        throw new Error("Resposta inválida do modelo na nutrition");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Erro na nutrition:", error);
+      throw error;
     }
   }
-  async training({
-    name,
-    gender,
-    weight,
-    height,
-    age,
-    goal,
-    level,
-    workoutSplit,
-    experience,
-    workoutDuration,
-    limitations,
-    extraActivities
-  }: GeminiProps) {
+
+  async training(props: GeminiProps) {
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
@@ -109,18 +90,18 @@ Crie uma dieta completa e personalizada no formato JSON, com base nas informaç�
 Você é um especialista em educação física. Com base nas informações fornecidas, crie um plano de treino **completo e personalizado** no formato **JSON**.
 
 📌 Informações do usuário:
-- Nome: ${name}
-- Sexo: ${gender}
-- Peso: ${weight}kg
-- Altura: ${height}cm
-- Idade: ${age} anos
-- Objetivo: ${goal}
-- Nível de atividade física: ${level}
-- Divisão de treino: ${workoutSplit}
-- Experiência: ${experience}
-- Duração da sessão: ${workoutDuration} minutos
-- Limitações físicas: ${limitations || "nenhuma"}
-- Atividades extras: ${extraActivities || "nenhuma"}
+- Nome: ${props.name}
+- Sexo: ${props.gender}
+- Peso: ${props.weight}kg
+- Altura: ${props.height}cm
+- Idade: ${props.age} anos
+- Objetivo: ${props.goal}
+- Nível de atividade física: ${props.level}
+- Divisão de treino: ${props.workoutSplit}
+- Experiência: ${props.experience}
+- Duração da sessão: ${props.workoutDuration} minutos
+- Limitações físicas: ${props.limitations || "nenhuma"}
+- Atividades extras: ${props.extraActivities || "nenhuma"}
 
 ⚠️ Instruções obrigatórias:
 - Use **apenas** as informações acima.
@@ -135,12 +116,12 @@ Você é um especialista em educação física. Com base nas informações forne
 
 📦 Formato esperado:
 {
-  "nome": "${name}",
-  "sexo": "${gender}",
-  "idade": ${age},
-  "altura": ${height},
-  "peso": ${weight},
-  "objetivo": "${goal}",
+  "nome": "${props.name}",
+  "sexo": "${props.gender}",
+  "idade": ${props.age},
+  "altura": ${props.height},
+  "peso": ${props.weight},
+  "objetivo": "${props.goal}",
   "workoutPlan": [
     {
       "title": "💪 Treino A - Peito e Triceps",
@@ -158,14 +139,12 @@ Você é um especialista em educação física. Com base nas informações forne
 }
 `;
 
-
-
-
+      console.log("training: enviando requisição para Google Generative AI");
       const result = await model.generateContent(prompt);
+      console.log("training: resposta recebida");
 
       if (result.response && result.response.candidates) {
-        const jsonText = result.response.candidates[0]?.content.parts[0]
-          .text as string;
+        const jsonText = result.response.candidates[0]?.content.parts[0].text as string;
 
         let jsonString = jsonText
           .replace(/```\w*\n/g, "")
@@ -175,52 +154,51 @@ Você é um especialista em educação física. Com base nas informações forne
         let jsonObject = JSON.parse(jsonString);
 
         return { data: jsonObject };
+      } else {
+        throw new Error("Resposta inválida do modelo na training");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Erro na training:", error);
+      throw error;
     }
   }
-  async execute({
-    name,
-    gender,
-    weight,
-    height,
-    age,
-    goal,
-    level,
-  }: GeminiProps) {
+
+  async execute(props: GeminiProps) {
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-      const prompt = `Crie uma dieta completa para uma pessoa com nome: ${name} do sexo ${gender} com peso atual: ${weight}kg, altura: ${height}, idade: ${age} anos e com foco e objetivo em ${goal}, atualmente nível de atividade: ${level} e ignore qualquer outro parametro que não seja os passados, retorne em json com as respectivas propriedades, propriedade nome o nome da pessoa, propriedade sexo com sexo, propriedade idade, propriedade altura, propriedade peso, propriedade objetivo com o objetivo atual, propriedade refeições com uma array contendo dentro cada objeto sendo uma refeição da dieta e dentro de cada refeição a propriedade horário com horário da refeição em horas, propriedade nome com nome e a propriedade alimentos com array contendo os alimentos dessa refeição e pode incluir uma propreidade como suplementos contendo array com sugestão de suplemento que é indicado para o sexo dessa pessoa e o objetivo dela e não retorne nenhuma observação alem das passadas no prompt, retorne em json e nenhuma propriedade pode ter acento. exemplo de como deve ser retornado: 
+      const prompt = `Crie uma dieta completa para uma pessoa com nome: ${props.name} do sexo ${props.gender} com peso atual: ${props.weight}kg, altura: ${props.height}, idade: ${props.age} anos e com foco e objetivo em ${props.goal}, atualmente nível de atividade: ${props.level} e ignore qualquer outro parametro que não seja os passados, retorne em json com as respectivas propriedades, propriedade nome o nome da pessoa, propriedade sexo com sexo, propriedade idade, propriedade altura, propriedade peso, propriedade objetivo com o objetivo atual, propriedade refeições com uma array contendo dentro cada objeto sendo uma refeição da dieta e dentro de cada refeição a propriedade horário com horário da refeição em horas, propriedade nome com nome e a propriedade alimentos com array contendo os alimentos dessa refeição e pode incluir uma propreidade como suplementos contendo array com sugestão de suplemento que é indicado para o sexo dessa pessoa e o objetivo dela e não retorne nenhuma observação alem das passadas no prompt, retorne em json e nenhuma propriedade pode ter acento. exemplo de como deve ser retornado: 
       {
-		"nome": ${name},
-		"sexo": ${gender},
-		"idade": ${age},
-		"altura": ${height},
-		"peso": ${weight},
-		"objetivo": ${goal},
-		"refeicoes": [
-			{
-				"horario": "00:00",
-				"nome": "",
-				"alimentos": [
-					"",
-				]
-		],
-		"suplementos": [
-			{
-				"nome": "",
-				"dosagem": ""
-			}
-		]
-}`;
+    "nome": "${props.name}",
+    "sexo": "${props.gender}",
+    "idade": ${props.age},
+    "altura": ${props.height},
+    "peso": ${props.weight},
+    "objetivo": "${props.goal}",
+    "refeicoes": [
+      {
+        "horario": "00:00",
+        "nome": "",
+        "alimentos": [
+          "",
+        ]
+      }
+    ],
+    "suplementos": [
+      {
+        "nome": "",
+        "dosagem": ""
+      }
+    ]
+}
+`;
 
+      console.log("execute: enviando requisição para Google Generative AI");
       const result = await model.generateContent(prompt);
+      console.log("execute: resposta recebida");
 
       if (result.response && result.response.candidates) {
-        const jsonText = result.response.candidates[0]?.content.parts[0]
-          .text as string;
+        const jsonText = result.response.candidates[0]?.content.parts[0].text as string;
 
         let jsonString = jsonText
           .replace(/```\w*\n/g, "")
@@ -230,9 +208,12 @@ Você é um especialista em educação física. Com base nas informações forne
         let jsonObject = JSON.parse(jsonString);
 
         return { data: jsonObject };
+      } else {
+        throw new Error("Resposta inválida do modelo na execute");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Erro na execute:", error);
+      throw error;
     }
   }
 }

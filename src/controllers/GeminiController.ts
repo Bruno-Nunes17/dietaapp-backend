@@ -24,30 +24,10 @@ class GeminiController {
       console.log("nutrition start");
       const start = Date.now();
 
-      const {
-        name,
-        gender,
-        weight,
-        height,
-        age,
-        goal,
-        level,
-        foods,
-        meals,
-      } = request.body as GeminiProps;
+      const props = request.body as GeminiProps;
 
       const GeminiResponse = new GeminiService();
-      const order = await GeminiResponse.nutrition({
-        name,
-        gender,
-        weight,
-        height,
-        age,
-        goal,
-        level,
-        foods,
-        meals,
-      });
+      const order = await GeminiResponse.nutrition(props);
 
       console.log("nutrition end:", Date.now() - start, "ms");
       reply.send(order);
@@ -62,36 +42,10 @@ class GeminiController {
       console.log("training start");
       const start = Date.now();
 
-      const {
-        name,
-        gender,
-        weight,
-        height,
-        age,
-        goal,
-        level,
-        workoutSplit,
-        experience,
-        workoutDuration,
-        limitations,
-        extraActivities,
-      } = request.body as GeminiProps;
+      const props = request.body as GeminiProps;
 
       const GeminiResponse = new GeminiService();
-      const order = await GeminiResponse.training({
-        name,
-        gender,
-        weight,
-        height,
-        age,
-        goal,
-        level,
-        workoutSplit,
-        experience,
-        workoutDuration,
-        limitations,
-        extraActivities,
-      });
+      const order = await GeminiResponse.training(props);
 
       console.log("training end:", Date.now() - start, "ms");
       reply.send(order);
@@ -106,49 +60,11 @@ class GeminiController {
       console.log("mixed start");
       const start = Date.now();
 
-      const {
-        name,
-        gender,
-        weight,
-        height,
-        age,
-        goal,
-        level,
-        foods,
-        meals,
-        workoutSplit,
-        experience,
-        workoutDuration,
-        limitations,
-        extraActivities,
-      } = request.body as GeminiProps;
+      const props = request.body as GeminiProps;
 
       const GeminiResponse = new GeminiService();
-      const nutritionOrder = await GeminiResponse.nutrition({
-        name,
-        gender,
-        weight,
-        height,
-        age,
-        goal,
-        level,
-        foods,
-        meals,
-      });
-      const trainingOrder = await GeminiResponse.training({
-        name,
-        gender,
-        weight,
-        height,
-        age,
-        goal,
-        level,
-        workoutSplit,
-        experience,
-        workoutDuration,
-        limitations,
-        extraActivities,
-      });
+      const nutritionOrder = await GeminiResponse.nutrition(props);
+      const trainingOrder = await GeminiResponse.training(props);
 
       console.log("mixed end:", Date.now() - start, "ms");
       reply.send({ nutrition: nutritionOrder?.data, training: trainingOrder?.data });
@@ -163,19 +79,10 @@ class GeminiController {
       console.log("handle start");
       const start = Date.now();
 
-      const { name, gender, weight, height, age, goal, level } =
-        request.body as GeminiProps;
+      const props = request.body as GeminiProps;
 
       const GeminiResponse = new GeminiService();
-      const order = await GeminiResponse.execute({
-        name,
-        gender,
-        weight,
-        height,
-        age,
-        goal,
-        level,
-      });
+      const order = await GeminiResponse.execute(props);
 
       console.log("handle end:", Date.now() - start, "ms");
       reply.send(order);
