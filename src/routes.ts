@@ -18,6 +18,24 @@ export async function routes(
     }
   );
   fastify.post(
+    "/nutricao",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      return new GeminiController().nutrition(request, reply);
+    }
+  );
+  fastify.post(
+    "/exercicios",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      return new GeminiController().training(request, reply);
+    }
+  );
+  fastify.post(
+    "/completo",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      return new GeminiController().mixed(request, reply);
+    }
+  );
+    fastify.post(
     "/create",
     async (request: FastifyRequest, reply: FastifyReply) => {
       return new GeminiController().handle(request, reply);
